@@ -2,342 +2,130 @@
 //  AppDelegate.swift
 //  Widdit
 //
-//  Created by John McCants on 3/19/16.
-//  Copyright © 2016 John McCants. All rights reserved.
+//  Created by JH Lee on 02/03/2017.
+//  Copyright © 2017 Widdit. All rights reserved.
 //
 
 import UIKit
-import CoreData
-import Parse
-import Bolts
-import ParseFacebookUtilsV4
-import XCGLogger
+import UserNotifications
 import IQKeyboardManagerSwift
-import Whisper
-
-let log = XCGLogger.defaultInstance()
+import ParseFacebookUtilsV4
+import Fabric
+import Crashlytics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        log.setup(.Debug, showThreadName: true, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: "path/to/file", fileLogLevel: .Debug)
+        //NavigationBar
+        UINavigationBar.appearance().barTintColor = UIColor.WDTPrimaryColor()
+        UINavigationBar.appearance().tintColor = UIColor.white
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.WDTLight(size: 16)]
         
-        log.debug("A debug message")
+        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffsetMake(0, -60), for: .default)
+        let imgBack = UIImage(named: "common_button_back")
+        UINavigationBar.appearance().backIndicatorImage = imgBack
+        UINavigationBar.appearance().backIndicatorTransitionMaskImage = imgBack
+        
+        //IQKeyboardManager
         IQKeyboardManager.sharedManager().enable = true
-//        IQKeyboardManager.sharedManager().enableAutoToolbar = false
-//        IQKeyboardManager.sharedManager().
-//        IQKeyboardManager.sharedManager().disabledToolbarClasses.insert("NewPostVC")
-        IQKeyboardManager.sharedManager().disableToolbarInViewControllerClass(NewPostVC.self)
-        IQKeyboardManager.sharedManager().disableToolbarInViewControllerClass(ReplyViewController.self)
+        IQKeyboardManager.sharedManager().enableAutoToolbar = false
         
-        IQKeyboardManager.sharedManager().disableDistanceHandlingInViewControllerClass(ReplyViewController.self)
-
-        //configure push notifications
-        let userNotificationTypes: UIUserNotificationType = [.Alert, .Badge, .Sound]
-        let settings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
-        application.registerUserNotificationSettings(settings)
-        application.registerForRemoteNotifications()
-
-        //app wide navigation bar changes
-        UINavigationBar.appearance().barTintColor = UIColor.WDTGrayBlueColor()
-        UINavigationBar.appearance().tintColor = UIColor.WDTBlueColor()
-        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.WDTBlueColor(), NSFontAttributeName: UIFont.WDTAgoraRegular(16)]
-        UINavigationBar.appearance().translucent = true
+        //Parse
+        let configuration = ParseClientConfiguration {
+            $0.applicationId = Constants.Parse.APPLICATION_ID
+            $0.clientKey = Constants.Parse.CLIENT_KEY
+            $0.server = Constants.Parse.SERVER
+        }
+        Parse.initialize(with: configuration)
         
-
-        
-        //app wide bar button item changes
-        UITabBar.appearance().tintColor = UIColor.WDTBlueColor()
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.WDTBlueColor(), NSFontAttributeName: UIFont.WDTAgoraRegular(16)], forState: .Normal)
-        
-//        UITabBar.appearance().barTintColor = UIColor.blueColor()
-
-        //app wide status bar changes
-        UINavigationBar.appearance().barStyle = .Default
-
-        // [Optional] Power your app with Local Datastore. For more info, go to
-        // https://parse.com/docs/ios_guide#localdatastore/iOS
-        Parse.enableLocalDatastore()
-        
-        
-        //WDTPostModel.initialize()
-        // Initialize Parse.
-        
-        Parse.setApplicationId("CbvFKWpmIJFzo8gKzwPXdM5lN1bGPXu2Ln3lbjGx",
-            clientKey: "H6X4RPx8lay4X1YUCu9gA1kPjI2gFxepr152h5x6")
         PFUser.enableRevocableSessionInBackground()
-        // [Optional] Track statistics around application opens.
-        PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+        PFAnalytics.trackAppOpened(launchOptions: launchOptions)
         
-        // call login function
-        login()
+        //PFFacebookUtils
+        PFFacebookUtils.initializeFacebook(applicationLaunchOptions: launchOptions)
         
-        // color of window
-        window?.backgroundColor = .whiteColor()
-
-        PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)
-
-        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        //Fabric
+        Fabric.with([Crashlytics.self])
         
-        
-        guard let launchOptions = launchOptions else {return true}
-        if let userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
-            if let topController = UIApplication.topViewController() {
-                let destVC = ActivityVC()
-                topController.navigationController?.pushViewController(destVC, animated: true)
+        //StartApplication
+        if let user = PFUser.current() {
+            if let signUpFinished = user["signUpFinished"] as? Bool, signUpFinished {
+                startApplication(false)
+            } else {
+                PFUser.logOut()
             }
-            
-//            if let postObjectId = userInfo["post"], userObjectId = userInfo["who"] {
-//                let post = PFObject(withoutDataWithClassName: "posts", objectId: postObjectId as? String)
-//                let query = PFUser.query()
-//                query?.whereKey("objectId", equalTo: userObjectId)
-//                query?.getObjectInBackgroundWithId(userObjectId as! String, block: { (user: PFObject?, error: NSError?) in
-//                    if let topController = UIApplication.topViewController() {
-//                        let destVC = ReplyViewController()
-//                        destVC.usersPost = post
-//                        destVC.toUser = user as! PFUser
-//                        topController.navigationController?.pushViewController(destVC, animated: true)
-//                    }
-//                })
-//            }
         }
         
         return true
     }
-    
-    
-    func delayedAction() {
-        let alert2 = UIAlertController(title: "Ok2", message: "Ok", preferredStyle: .Alert)
-        if let topController = UIApplication.topViewController() {
-            topController.presentViewController(alert2, animated: true, completion: nil)
-        }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let installation = PFInstallation.current()
+        installation?.setDeviceTokenFrom(deviceToken)
+        installation?.channels = ["global"]
+        installation?.saveEventually()
     }
     
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print(error.localizedDescription)
+    }
     
-    func login() {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        // if loged in
-        if let user = PFUser.currentUser() {
-            if let signUpFinished = user["signUpFinished"] as? Bool where signUpFinished == true {
-                let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let myTabBar = storyboard.instantiateViewControllerWithIdentifier("TabBar") as! UITabBarController
-                window?.rootViewController = myTabBar
-            }
-        }
     }
-
-
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        let installation = PFInstallation.currentInstallation()
-        installation.setDeviceTokenFromData(deviceToken)
-        installation.channels = ["global"]
-        installation.saveInBackground()
-    }
-
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        if let topController = UIApplication.topViewController() {
-            
-            let userObjectId = userInfo["who"] as! String
-            let postObjectId = userInfo["post"] as! String
-            
-            let post = PFObject(withoutDataWithClassName: "posts", objectId: postObjectId)
-            
-            let query = PFUser.query()
-            query?.whereKey("objectId", equalTo: userObjectId)
-            
-            query?.getObjectInBackgroundWithId(userObjectId, block: { (userObject: PFObject?, error: NSError?) in
-                let destVC = ReplyViewController()
-                let user = userObject as! PFUser
-                destVC.toUser = user
-                destVC.usersPost = post
-                
-                if topController.isKindOfClass(ReplyViewController) {
-                    let replyVC = topController as! ReplyViewController
-                    replyVC.requestMessages()
-                } else {
-                    if let aps = userInfo["aps"] as? NSDictionary {
-                        if let alert = aps["alert"] as? NSDictionary {
-                            if let message = alert["message"] as? String {
-                                let newMessageMurmur = Murmur(title: message)
-                                Whistle(newMessageMurmur, action: .Show(2.5))
-                            }
-                        } else if let alert = aps["alert"] as? String {
-                            let newMessageMurmur = Murmur(title: alert)
-                            Whistle(newMessageMurmur, action: .Show(2.5))
-                        }
-                    }
-                    
-//                    if let alert = userInfo["alert"] as? String {
-//                        
-//                    }
-//                    topController.navigationController?.pushViewController(destVC, animated: true)
-                }
-            })
-        }
-    }
-
-    func applicationWillResignActive(application: UIApplication) {
+    
+    func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
-        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        let installation = PFInstallation.currentInstallation()
-        if (installation.badge != 0) {
-            installation.badge = 0
-            installation.saveEventually()
-        }
         FBSDKAppEvents.activateApp()
-    }
-    
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool
-    {
-        return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
-    }
-    
-
-    func applicationWillTerminate(application: UIApplication) {
         
-        let loginManager: FBSDKLoginManager = FBSDKLoginManager()
-        loginManager.logOut()
-    }
-
-    // MARK: - Core Data stack
-
-    lazy var applicationDocumentsDirectory: NSURL = {
-        // The directory the application uses to store the Core Data store file. This code uses a directory named "JohnMcCants.Widdit" in the application's documents Application Support directory.
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1]
-    }()
-
-    lazy var managedObjectModel: NSManagedObjectModel = {
-        // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = NSBundle.mainBundle().URLForResource("Widdit", withExtension: "momd")!
-        return NSManagedObjectModel(contentsOfURL: modelURL)!
-    }()
-
-    lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
-        // The persistent store coordinator for the application. This implementation creates and returns a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
-        // Create the coordinator and store
-        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("SingleViewCoreData.sqlite")
-        var failureReason = "There was an error creating or loading the application's saved data."
-        do {
-            try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
-        } catch {
-            // Report any error we got.
-            var dict = [String: AnyObject]()
-            dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-            dict[NSLocalizedFailureReasonErrorKey] = failureReason
-
-            dict[NSUnderlyingErrorKey] = error as NSError
-            let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
-            // Replace this with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog("Unresolved error \(wrappedError), \(wrappedError.userInfo)")
-            abort()
-        }
-        
-        return coordinator
-    }()
-
-    lazy var managedObjectContext: NSManagedObjectContext = {
-        // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) This property is optional since there are legitimate error conditions that could cause the creation of the context to fail.
-        let coordinator = self.persistentStoreCoordinator
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
-        managedObjectContext.persistentStoreCoordinator = coordinator
-        return managedObjectContext
-    }()
-
-    // MARK: - Core Data Saving support
-
-    func saveContext () {
-        if managedObjectContext.hasChanges {
-            do {
-                try managedObjectContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
-                abort()
+        if let installation = PFInstallation.current() {
+            if(0 < installation.badge) {
+                installation.badge = 0;
+                installation.saveEventually()
             }
         }
     }
 
-}
-
-extension NSObject {
-    var theClassName: String {
-        return NSStringFromClass(self.dynamicType)
+    func applicationWillTerminate(_ application: UIApplication) {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-}
 
-extension UIApplication {
-    class func topViewController(base: UIViewController? = UIApplication.sharedApplication().keyWindow?.rootViewController) -> UIViewController? {
-        if let nav = base as? UINavigationController {
-            return topViewController(nav.visibleViewController)
-        }
-        if let tab = base as? UITabBarController {
-            if let selected = tab.selectedViewController {
-                return topViewController(selected)
-            }
-        }
-        if let presented = base?.presentedViewController {
-            return topViewController(presented)
-        }
-        return base
-    }
-}
-
-extension NSTimer {
-    /**
-     Creates and schedules a one-time `NSTimer` instance.
-     
-     - Parameters:
-     - delay: The delay before execution.
-     - handler: A closure to execute after `delay`.
-     
-     - Returns: The newly-created `NSTimer` instance.
-     */
-    class func schedule(delay delay: NSTimeInterval, handler: NSTimer! -> Void) -> NSTimer {
-        let fireDate = delay + CFAbsoluteTimeGetCurrent()
-        let timer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, fireDate, 0, 0, 0, handler)
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, kCFRunLoopCommonModes)
-        return timer
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        return FBSDKApplicationDelegate.sharedInstance().application(app, open: url, options: options)
     }
     
-    /**
-     Creates and schedules a repeating `NSTimer` instance.
-     
-     - Parameters:
-     - repeatInterval: The interval (in seconds) between each execution of
-     `handler`. Note that individual calls may be delayed; subsequent calls
-     to `handler` will be based on the time the timer was created.
-     - handler: A closure to execute at each `repeatInterval`.
-     
-     - Returns: The newly-created `NSTimer` instance.
-     */
-    class func schedule(repeatInterval interval: NSTimeInterval, handler: NSTimer! -> Void) -> NSTimer {
-        let fireDate = interval + CFAbsoluteTimeGetCurrent()
-        let timer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, fireDate, interval, 0, 0, handler)
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, kCFRunLoopCommonModes)
-        return timer
+    func startApplication(_ animated: Bool) {
+        //Save user on installation
+        let installation = PFInstallation.current()
+        installation?["user"] = PFUser.current()
+        installation?.saveEventually()
+        
+        //Show TabBarController
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let rootNC = window?.rootViewController as! UINavigationController
+        let tabbar = storyboard.instantiateViewController(withIdentifier: String(describing: WDTTabBarController.self)) as! WDTTabBarController
+        
+        rootNC.pushViewController(tabbar, animated: animated)
     }
+    
 }
+

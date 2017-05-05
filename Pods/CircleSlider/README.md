@@ -14,7 +14,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements
 - iOS 8.0+
-- Xcode 7
+- Xcode 8.0
 
 ## Installation
 
@@ -72,12 +72,16 @@ self.circleSlider.changeOptions([.BarWidth(45)])
 - ``case BarColor(UIColor)``
 - ``case TrackingColor(UIColor)``
 - ``case ThumbColor(UIColor)``
+- ``case ThumbImage(UIImage)``
 - ``case BarWidth(CGFloat)``
 - ``case ThumbWidth(CGFloat)``
 - ``case MaxValue(Float)``
 - ``case MinValue(Float)``
 - ``case SliderEnabled(Bool) ``
     - If you want to use as a progress, it should be this to false
+- ``case ViewInset(CGFloat) ``
+- ``case MinMaxSwitchTreshold(Float) ``
+
 
 ## Author
 shushutochako, shushutochako22@gmail.com

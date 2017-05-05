@@ -1,82 +1,111 @@
 PODS:
-  - AFImageHelper (3.0.2)
-  - ALCameraViewController (1.2.0)
-  - AsyncSwift (1.7.2)
-  - Bolts (1.7.0):
-    - Bolts/AppLinks (= 1.7.0)
-    - Bolts/Tasks (= 1.7.0)
-  - Bolts/AppLinks (1.7.0):
+  - ActiveLabel (0.7.1)
+  - ALCameraViewController (1.2.7)
+  - Bolts (1.8.4):
+    - Bolts/AppLinks (= 1.8.4)
+    - Bolts/Tasks (= 1.8.4)
+  - Bolts/AppLinks (1.8.4):
     - Bolts/Tasks
-  - Bolts/Tasks (1.7.0)
-  - CircleSlider (0.2.0)
-  - FBSDKCoreKit (4.11.0):
+  - Bolts/Tasks (1.8.4)
+  - CircleSlider (0.5.0)
+  - CPImageViewer (4.0.0)
+  - Crashlytics (3.8.4):
+    - Fabric (~> 1.6.3)
+  - DGActivityIndicatorView (2.1.1)
+  - Fabric (1.6.11)
+  - FBSDKCoreKit (4.20.2):
     - Bolts (~> 1.7)
-  - FBSDKLoginKit (4.11.0):
+  - FBSDKLoginKit (4.20.2):
     - FBSDKCoreKit
-  - ImageViewer (2.0)
-  - IQKeyboardManagerSwift (4.0.3)
-  - Kingfisher (2.4.1)
-  - libPhoneNumber-iOS (0.8.12)
+  - IQKeyboardManagerSwift (4.0.8)
+  - JSQMessagesViewController (7.3.4):
+    - JSQSystemSoundPlayer (~> 2.0.1)
+  - JSQSystemSoundPlayer (2.0.1)
+  - Kingfisher (3.6.1)
   - MBProgressHUD (0.9.2)
-  - Parse (1.13.0):
-    - Bolts/Tasks (~> 1.6)
+  - NSStringALEmail (0.4.0)
+  - Parse (1.14.2):
+    - Bolts/Tasks (~> 1.8)
   - ParseFacebookUtilsV4 (1.11.1):
     - Bolts/Tasks (>= 1.6)
     - FBSDKCoreKit (~> 4.10)
     - FBSDKLoginKit (~> 4.10)
     - FBSDKTVOSKit (~> 4.10)
     - Parse (~> 1.12)
-  - SimpleAlert (1.3.1)
-  - SinchVerification-Swift (1.4.4)
-  - SlackTextViewController (1.9.3)
-  - SnapKit (0.21.0)
-  - SwiftDate (3.0.8)
-  - Whisper (3.0.0)
-  - XCGLogger (3.3)
+  - PermissionScope (1.1.1)
+  - PhoneNumberKit (1.2.2):
+    - PhoneNumberKit/PhoneNumberKitCore (= 1.2.2)
+    - PhoneNumberKit/UIKit (= 1.2.2)
+  - PhoneNumberKit/PhoneNumberKitCore (1.2.2)
+  - PhoneNumberKit/UIKit (1.2.2):
+    - PhoneNumberKit/PhoneNumberKitCore
+  - RAMAnimatedTabBarController (2.1.1)
+  - SCLAlertView (0.7.0)
+  - SinchVerification-Swift (2.0.3)
+  - SJSegmentedScrollView (1.3.5)
+  - SkyFloatingLabelTextField (2.0.1)
+  - SnapKit (3.2.0)
+  - SwiftLinkPreview (2.0.3)
+  - TPKeyboardAvoiding (1.3.1)
+  - UITextView+Placeholder (1.2.0)
 
 DEPENDENCIES:
-  - AFImageHelper
-  - ALCameraViewController
-  - AsyncSwift
-  - Bolts
-  - CircleSlider
-  - ImageViewer
-  - IQKeyboardManagerSwift
-  - Kingfisher (~> 2.4)
-  - libPhoneNumber-iOS (~> 0.8)
-  - MBProgressHUD (~> 0.9.2)
-  - ParseFacebookUtilsV4
-  - SimpleAlert
-  - SinchVerification-Swift
-  - SlackTextViewController
-  - SnapKit
-  - SwiftDate
-  - Whisper
-  - XCGLogger (~> 3.3)
+  - ActiveLabel (~> 0.7)
+  - ALCameraViewController (~> 1.2)
+  - CircleSlider (~> 0.5)
+  - CPImageViewer (~> 4.0)
+  - Crashlytics (~> 3.8)
+  - DGActivityIndicatorView (~> 2.1)
+  - Fabric (~> 1.6)
+  - IQKeyboardManagerSwift (~> 4.0)
+  - JSQMessagesViewController (~> 7.3)
+  - Kingfisher (~> 3.5)
+  - MBProgressHUD (~> 0.9)
+  - NSStringALEmail (~> 0.4)
+  - ParseFacebookUtilsV4 (~> 1.11)
+  - PermissionScope (~> 1.1)
+  - PhoneNumberKit (~> 1.2)
+  - RAMAnimatedTabBarController (~> 2.1)
+  - SCLAlertView (~> 0.7)
+  - SinchVerification-Swift (~> 2.0)
+  - SJSegmentedScrollView (~> 1.3)
+  - SkyFloatingLabelTextField (~> 2.0)
+  - SnapKit (~> 3.2)
+  - SwiftLinkPreview (~> 2.0)
+  - TPKeyboardAvoiding (~> 1.3)
+  - UITextView+Placeholder (~> 1.2)
 
 SPEC CHECKSUMS:
-  AFImageHelper: 77a89f76b410655928b757a36627a66c1eb67fc2
-  ALCameraViewController: 03b480d0b41d3afc21fca48fc45345893ce2680a
-  AsyncSwift: 46a78bceb11f0e5bb52747f740d9692ec78d2d7c
-  Bolts: a0058fa3b331c5a1e4402d534f2dae36dbff31e4
-  CircleSlider: 66e5bf0059f5feffc954e5666f5286f4a331ebe3
-  FBSDKCoreKit: 686ac982723a14ec9ddb85e2f81235d7706c891b
-  FBSDKLoginKit: bade9fc78277764149ccc5bfaadbf13c83175c6a
-  ImageViewer: 00eae024d0cb2eebb4b228f4669b6c4872afadb9
-  IQKeyboardManagerSwift: b6883b720b0e76473692fdc80828442566e1075f
-  Kingfisher: 41aed5b6c1ed8fa98cf6d75283ce89cf7890f517
-  libPhoneNumber-iOS: 3f1889b70403cf7848c0e4136780a0d0aef9016d
+  ActiveLabel: 68625f22775f51c31bb691ca8de20f1e5a3bc825
+  ALCameraViewController: 4a513b8d5ecfdb3f34c50b1d469c373aae1ec7b4
+  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
+  CircleSlider: c6eca7297b40e3a638395a938d1b16b8c4710821
+  CPImageViewer: 7ebd6f707b45d70a3253b2b15f00c31c581a2704
+  Crashlytics: 79e236942ca1e7fc641df1feb9a275360a78ab6a
+  DGActivityIndicatorView: ff2c76073d79692f724863c8dd38685866a03cb6
+  Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
+  FBSDKCoreKit: 82eac696eb6157da5f4266c3a241f00e9bd72471
+  FBSDKLoginKit: 2211bede07c83391349eacc1fd86cf6d9289ce38
+  IQKeyboardManagerSwift: c04bc9f68473823f825eb44d958fce98d921bead
+  JSQMessagesViewController: 39fed975e3c9f8eba7292071e29eeb541d105e66
+  JSQSystemSoundPlayer: c5850e77a4363ffd374cd851154b9af93264ed8d
+  Kingfisher: 2f31cb75f3e98d3d4c406cbdcd9b263e956cfa67
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
-  Parse: f51c24d2feb412e4b2d6cc73d37cb24e8d0089bc
+  NSStringALEmail: 90285bc5f48eb792d8ed3d71b278f78dea80a7f6
+  Parse: 4335d65f40cb3d43190d723144bbe1afb9c38230
   ParseFacebookUtilsV4: 2f30c2b7021c8005d3042781da7ef87d06589421
-  SimpleAlert: 05215ee656e1da1428998e76a76bb153a16c7a21
-  SinchVerification-Swift: b62b0472825ce2be237d84c9ccc323eeccb4e0b6
-  SlackTextViewController: bd2a34c188d4f7dec93cf42388f38551263fac82
-  SnapKit: 2756fe24b706367af224c9c508d2f9166d03354c
-  SwiftDate: 971f8b9394f664f2226b9c3ab64e801a7291c612
-  Whisper: 42a3ee7c2936f861b23d41bd6cd7dfd22f102405
-  XCGLogger: d6e196e78940ff6daab17d6917107876f973fa31
+  PermissionScope: a30c16e015779ba27c97c124e7539e27b5829de2
+  PhoneNumberKit: ffae8f18fb78c1425c7af973711b0b0fd4f4104f
+  RAMAnimatedTabBarController: 128e0d71dc802766de575a3c59c6fdcc8e2f921b
+  SCLAlertView: 8a14ffc40590c619e183eed2298b854385f30be1
+  SinchVerification-Swift: 567aaf9cb29c55a115faecb6016fea25a7f37688
+  SJSegmentedScrollView: 20e4c2e5489329e06c483f8824dbb55d055e9ffa
+  SkyFloatingLabelTextField: 070e749632ffd608d6fd9db3fa488a822524997c
+  SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
+  SwiftLinkPreview: b5ca44d10bad50db03c130adb0e6f2ac0588586e
+  TPKeyboardAvoiding: 0d6af20e95e2850f4c621841225b59ec7d8dd852
+  UITextView+Placeholder: 77680995fcdd07c3f52ec92fe1150874a2ac89ff
 
-PODFILE CHECKSUM: 39311046766eb92e95b6fabcdafc450439af1d0e
+PODFILE CHECKSUM: 2a5f6f0bf874005d43016ce1afb01cddc9aa62b6
 
-COCOAPODS: 1.0.0
+COCOAPODS: 1.2.0
