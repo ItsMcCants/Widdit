@@ -85,8 +85,9 @@ class WDTActivity {
                                         repliedBack: false)
                 
                 activity.object.saveInBackground(block: { (success, error) in
-                    completion(activity.object)
-                    WDTActivity.sharedInstance().requestMyDowns(completion: { (success) in})
+                    WDTActivity.sharedInstance().requestMyDowns(completion: { (success) in
+                        completion(activity.object)
+                    })
                 })
             }
         }

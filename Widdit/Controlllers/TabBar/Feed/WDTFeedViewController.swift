@@ -78,10 +78,12 @@ class WDTFeedViewController: WDTFeedBaseViewController {
                             return false
                         })
                         
-                        self?.hideHud()
-                        self?.m_ctlRefresh.endRefreshing()
-                        
-                        self?.tableView.reloadData()
+                        WDTActivity.sharedInstance().requestMyDowns(completion: { [weak self] succeeded in
+                            self?.hideHud()
+                            self?.m_ctlRefresh.endRefreshing()
+                            
+                            self?.tableView.reloadData()
+                        })
                     })
                 })
             }

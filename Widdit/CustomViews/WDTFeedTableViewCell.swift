@@ -279,7 +279,7 @@ class WDTFeedTableViewCell: UITableViewCell {
             }
         }
         
-        updateDowns()
+//        updateDowns()
 //        updateReplies()
     }
     
@@ -326,13 +326,21 @@ class WDTFeedTableViewCell: UITableViewCell {
                 
                 if btnDown.isSelected {
                     if let user = objPost["user"] as? PFUser {
-                        WDTActivity.isDownAndReverseDown(user: user, post: objPost) { (down) in
+                        WDTActivity.isDownAndReverseDown(user: user,
+                                                         post: objPost) { [weak self] (down) in
                             if let down = down, let activity = Activity(pfObject: down) {
-                                self.sendMessage("I'm down", activity: activity, to: user)
+                                self?.sendMessage("I'm down",
+                                                  activity: activity,
+                                                  to: user)
                             } else {
-                                WDTActivity.addActivity(user: user, post: objPost, type: .Down, completion: { (activityObj) in
+                                WDTActivity.addActivity(user: user,
+                                                        post: objPost,
+                                                        type: .Down,
+                                                        completion: { [weak self] (activityObj) in
                                     if let activity = Activity(pfObject: activityObj) {
-                                        self.sendMessage("I'm down", activity: activity, to: user)
+                                        self?.sendMessage("I'm down",
+                                                          activity: activity,
+                                                          to: user)
                                     }
                                 })
                             }
@@ -361,7 +369,9 @@ class WDTFeedTableViewCell: UITableViewCell {
                                        comeFromTheFeed: true)
             
             reply.send {
-                activity.addReply(reply, completion: nil)
+                activity.addReply(reply, completion: { [weak self] _ in
+                    self?.updateDowns()
+                })
             }
         }
     }
@@ -385,35 +395,36 @@ class WDTFeedTableViewCell: UITableViewCell {
     
     fileprivate func updateDowns() {
         if let objPost = m_objPost {
-            let objUser = objPost["user"] as! PFUser
+//            let objUser = objPost["user"] as! PFUser
 
-            var totalDowns = 0
-
-            var pendingRequests = 2
-            func incrementTotalDowns(by count: Int) {
-                totalDowns += count
-
-                pendingRequests -= 1
-
-                if pendingRequests <= 0 {
-//                    self.m_lblPostDowns.text = "\(totalDowns)"
-                }
-            }
-
-            let activity = WDTActivity()
-            activity.post = objPost
-            activity.requestDowns(completion: { succeeded in
-                let downs = activity.downs.count
-                incrementTotalDowns(by: downs)
-            })
+//            var totalDowns = 0
+//
+//            var pendingRequests = 2
+//            func incrementTotalDowns(by count: Int) {
+//                totalDowns += count
+//
+//                pendingRequests -= 1
+//
+//                if pendingRequests <= 0 {
+////                    self.m_lblPostDowns.text = "\(totalDowns)"
+//                }
+//            }
+//
+            let activity = WDTActivity.sharedInstance()
+//            activity.post = objPost
+//            activity.requestDowns(completion: { succeeded in
+//                let downs = activity.downs.count
+//                incrementTotalDowns(by: downs)
+//            })
             activity.requestMyDowns(completion: { [weak self] succeeded in
-                let downs = activity.myDowns.count
-                
                 if self?.isCurrentUserCell == false {
-                    self?.m_bottomRightButton.isSelected = downs > 0
+                    self?.m_bottomRightButton.isSelected = activity.myDowns.filter({ (down) -> Bool in
+                        let localPost = down["post"] as! PFObject
+                        return localPost.objectId == objPost.objectId
+                    }).count > 0
                 }
                 
-                incrementTotalDowns(by: downs)
+//                incrementTotalDowns(by: downs)
             })
         }
     }
