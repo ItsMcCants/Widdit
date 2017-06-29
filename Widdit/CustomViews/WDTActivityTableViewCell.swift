@@ -38,6 +38,8 @@ class WDTActivityTableViewCell: UITableViewCell {
         m_imgAvatar.addGestureRecognizer(tap)
         
         m_arrowImageView.tintColor = UIColor(r: 189, g: 189, b: 189, a: 1)
+        
+        m_newPostIndicator.isHidden = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -73,8 +75,6 @@ class WDTActivityTableViewCell: UITableViewCell {
         
         // Not watched activity indicator
         if let lastMessageUser = activity.lastMessageUser {
-            m_newPostIndicator.isHidden = true
-            
             lastMessageUser.fetchIfNeededInBackground(block: { [weak self] (_, _) in
                 if lastMessageUser.username != PFUser.current()?.username {
                     self?.m_newPostIndicator.isHidden = activity.lastMessageRead
