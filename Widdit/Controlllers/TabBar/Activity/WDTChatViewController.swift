@@ -90,6 +90,12 @@ class WDTChatViewController: JSQMessagesViewController {
         inputToolbar.contentView.textView.becomeFirstResponder()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        inputToolbar.contentView.textView.resignFirstResponder()
+    }
+    
     func getChatHistory() {
         if let objPost = m_objPost,
            let objUser = m_objUser {
