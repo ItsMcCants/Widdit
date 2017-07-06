@@ -194,6 +194,7 @@ class WDTReplyViewController: UIViewController {
     @IBAction func presentPost() {
         let morePostsVC = storyboard?.instantiateViewController(withIdentifier: String(describing: WDTMorePostsViewController.self)) as! WDTMorePostsViewController
         morePostsVC.m_objPost = m_objPost
+        morePostsVC.shouldShowSearch = false
         navigationController?.pushViewController(morePostsVC, animated: true)
     }
     

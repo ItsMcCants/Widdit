@@ -24,6 +24,7 @@ class WDTProfileViewController: SJSegmentedViewController, SJSegmentedViewContro
         
         let feedVC = storyboard?.instantiateViewController(withIdentifier: String(describing: WDTMorePostsViewController.self)) as! WDTMorePostsViewController
         feedVC.m_objUser = m_objUser
+        feedVC.shouldShowSearch = false
         feedVC.title = "Feed"
         
         let aboutVC = storyboard?.instantiateViewController(withIdentifier: String(describing: WDTAboutViewController.self)) as! WDTAboutViewController
