@@ -91,6 +91,7 @@ class WDTCategoriesViewController: UIViewController, UITableViewDelegate, UITabl
         
         let morePostsVC = storyboard?.instantiateViewController(withIdentifier: String(describing: WDTMorePostsViewController.self)) as! WDTMorePostsViewController
         morePostsVC.m_strCategory = objCategory["title"] as? String
+        morePostsVC.shouldShowSearchInNavigationBar = false
         navigationController?.pushViewController(morePostsVC, animated: true)
     }
     
